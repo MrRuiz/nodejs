@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+    <h1><%= title %></h1>
+    <p>Welcome to <%= title %></p>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      var socket = io.connect('http://localhost');
+
+
+      var usuario = prompt("NOMBRE DE USUARIO: ");
+
+      function enviarMensajeAlServidor() {
+
+        var texto        = document.getElementById('texto');
+
+        socket.emit('chatCliente', { elUsuario: usuario, elTexto: texto.value });
+      }
+
+      socket.on('chatServidor', function (data) {
+        var conversacion = document.getElementById('conversacion');
+
+        conversacion.innerHTML +=  "<br /><strong>" + data.elUser + "</strong>: " + data.elText;
+
+      });
+
+    </script>
+
+    <div id="chat">
+        <!-- <input type="text" id="usuario" name="usuario" /><br /> -->
+        <textarea id="texto" name="texto"></textarea><br />
+        <button id="enviar" name="enviar" onclick="enviarMensajeAlServidor()">Enviar</button>
+        <br /><br />
+        <div id="conversacion" name="conversacion"></div>
+    </div>
+
+  </body>
+</html>
