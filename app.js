@@ -1,11 +1,5 @@
-
-/**
- * Module dependencies.
- */
-
 var express = require('express');
 var routes = require('./routes');
-var user = require('./routes/user');
 var http = require('http');
 var path = require('path');
 
@@ -14,6 +8,9 @@ var server = http.createServer(app).listen(3000, function(){
   console.log('Express server listening on port ' + 3000);
 });
 var io  = require('socket.io').listen(server);
+
+//array de usuarios
+var user = [];
 
 // all environments
 app.set('port', process.env.PORT || 3000);
@@ -35,10 +32,23 @@ if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
 
+//ROUTES
 app.get('/', routes.index);
-app.get('/users', user.list);
+app.get('/test', function(req, res){
+    res.render('_test', {
+        title: 'Bienvenido a TEST',
+        pageName: 'test',
+    });
+});
 
+//COMMUNICATION MAGIC
 io.sockets.on('connection', function (socket) {
+
+  socket.on('newUser', function (data) {
+    user.push(data.name);
+    io.sockets.emit('sendNames', { arrayNames: user });
+  });
+
   socket.on('chatCliente', function (data) {
     var user = data.elUsuario;
     var text = data.elTexto;

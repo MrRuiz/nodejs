@@ -12,6 +12,7 @@
         var socket  = io.connect('http://localhost');
 
         var usuario = prompt("NOMBRE DE USUARIO: ");
+        socket.emit('newUser', {name: usuario});
 
         $("#enviar").click(function() {
           var texto = document.getElementById('texto');
@@ -24,6 +25,13 @@
 
           conversacion.innerHTML +=  "<br /><strong>" + data.elUser + "</strong>: " + data.elText;
         });
+
+        socket.on('sendNames', function (data) {
+          $.each(data.arrayNames, function(i, elemento) {
+            console.log(elemento);
+          });
+
+        });
       });
     </script>
 
@@ -35,6 +43,8 @@
         <br /><br />
         <div id="conversacion" name="conversacion"></div>
     </div>
+
+    <a href="/test">Ve a dar una vuelta por test</a>
 
   </body>
 </html>
